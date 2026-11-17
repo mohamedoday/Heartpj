@@ -1,13 +1,13 @@
 /**
  * ============================================================================
- * QUANTUM-PULSE 100 // ENTERPRISE CRYPTOGRAPHIC COUNTER & CELEBRATION ENGINE
+ * LIQUID-OS QUANTUM COUNTER KERNEL // ELITE SECURE ARCHITECTURE
  * ============================================================================
- * Layers Implemented:
- * 1. CryptoVaultEngine      : AES-256-GCM Encryption + PBKDF2 Key Derivation
- * 2. IntegrityGuard         : SHA-256 State Checksum & Tamper Detection
- * 3. AcousticSynthesizer    : Web Audio API Procedural Sound & Fanfare Engine
+ * Layers Included:
+ * 1. CryptoVaultEngine      : AES-256-GCM State Encryption & PBKDF2 Key Derivation
+ * 2. IntegrityGuard         : SHA-256 State Checksum & Tamper Prevention
+ * 3. AcousticSynthesizer    : Web Audio API Procedural Dynamic Sound Engine
  * 4. ParticlePhysicsEngine  : High-FPS Canvas Fireworks & Confetti Emitter
- * 5. QuantumCounterKernel   : Core State Orchestrator & DOM Controller
+ * 5. QuantumCounterKernel   : Core State Orchestrator & DOM Renderer
  * ============================================================================
  */
 
@@ -17,35 +17,24 @@
  * LAYER 1: CRYPTOGRAPHIC STORAGE VAULT (AES-256-GCM + PBKDF2-SHA256)
  * ============================================================================ */
 class CryptoVaultEngine {
-    constructor(storageKey = "qp100_encrypted_vault_v1") {
+    constructor(storageKey = "liquidos_vault_secure_v1") {
         this.storageKey = storageKey;
         this.encoder = new TextEncoder();
         this.decoder = new TextDecoder();
-        this.pbkdf2Iterations = 120000;
+        this.pbkdf2Iterations = 150000;
         this.masterSeed = this.#resolveDeviceFingerprintSeed();
     }
 
-    /**
-     * Generates a deterministic local entropy seed combined with random salt
-     * so stored ciphertext cannot be trivially copied across origins.
-     */
     #resolveDeviceFingerprintSeed() {
-        const rawEntropy = [
+        return [
             navigator.userAgent,
             navigator.language,
-            screen.width,
-            screen.height,
-            new Date().getTimezoneOffset(),
-            "QP100-MILESTONE-VAULT-SECRET-ROOT"
+            screen.width || 1920,
+            screen.height || 1080,
+            "LIQUID-OS-SECURE-ROOT-KEY-2026"
         ].join("|");
-        return rawEntropy;
     }
 
-    /**
-     * Derives a non-extractable AES-256-GCM CryptoKey using PBKDF2.
-     * @param {Uint8Array} salt
-     * @returns {Promise<CryptoKey>}
-     */
     async #deriveAesKey(salt) {
         const keyMaterial = await window.crypto.subtle.importKey(
             "raw",
@@ -69,11 +58,6 @@ class CryptoVaultEngine {
         );
     }
 
-    /**
-     * Converts an ArrayBuffer or Uint8Array to a Base64 string.
-     * @param {Uint8Array} bytes
-     * @returns {string}
-     */
     #bytesToBase64(bytes) {
         let binary = "";
         const len = bytes.byteLength;
@@ -83,11 +67,6 @@ class CryptoVaultEngine {
         return window.btoa(binary);
     }
 
-    /**
-     * Converts a Base64 string back into a Uint8Array.
-     * @param {string} base64
-     * @returns {Uint8Array}
-     */
     #base64ToBytes(base64) {
         const binary = window.atob(base64);
         const len = binary.length;
@@ -98,11 +77,6 @@ class CryptoVaultEngine {
         return bytes;
     }
 
-    /**
-     * Encrypts a JavaScript payload object with AES-256-GCM and persists it.
-     * @param {Object} payload
-     * @returns {Promise<boolean>}
-     */
     async sealPayload(payload) {
         try {
             const salt = window.crypto.getRandomValues(new Uint8Array(16));
@@ -117,7 +91,7 @@ class CryptoVaultEngine {
             );
 
             const envelope = {
-                v: 1,
+                v: 2,
                 alg: "AES-256-GCM",
                 salt: this.#bytesToBase64(salt),
                 iv: this.#bytesToBase64(iv),
@@ -128,23 +102,19 @@ class CryptoVaultEngine {
             window.localStorage.setItem(this.storageKey, JSON.stringify(envelope));
             return true;
         } catch (err) {
-            console.error("[CryptoVaultEngine] Encryption failure:", err);
+            console.error("[CryptoVaultEngine] Encryption error:", err);
             return false;
         }
     }
 
-    /**
-     * Reads, authenticates, and decrypts the stored vault payload.
-     * @returns {Promise<Object|null>}
-     */
     async unsealPayload() {
         try {
             const raw = window.localStorage.getItem(this.storageKey);
             if (!raw) return null;
 
             const envelope = JSON.parse(raw);
-            if (!envelope || envelope.alg !== "AES-256-GCM" || !envelope.salt || !envelope.iv || !envelope.ct) {
-                throw new Error("Malformed cryptographic envelope");
+            if (!envelope || envelope.alg !== "AES-256-GCM") {
+                throw new Error("Invalid cryptographic envelope format");
             }
 
             const salt = this.#base64ToBytes(envelope.salt);
@@ -158,60 +128,50 @@ class CryptoVaultEngine {
                 ciphertext
             );
 
-            const decodedJson = this.decoder.decode(decryptedBuffer);
-            return JSON.parse(decodedJson);
+            return JSON.parse(this.decoder.decode(decryptedBuffer));
         } catch (err) {
-            console.warn("[CryptoVaultEngine] Vault tampered or unreadable. Purging corrupted data.", err);
+            console.warn("[CryptoVaultEngine] Vault integrity check failed. Purging corrupted state.", err);
             this.purgeVault();
             return null;
         }
     }
 
-    /**
-     * Securely erases the encrypted storage key.
-     */
     purgeVault() {
         window.localStorage.removeItem(this.storageKey);
     }
 }
 
 /* ============================================================================
- * LAYER 2: MEMORY & STATE INTEGRITY GUARD (SHA-256 CHECKSUM ENGINE)
+ * LAYER 2: INTEGRITY GUARD & HASH VERIFICATION
  * ============================================================================ */
 class IntegrityGuard {
     constructor() {
         this.encoder = new TextEncoder();
-        this.sessionNonce = this.#generateHexNonce(16);
+        this.nonce = this.#generateNonce();
     }
 
-    #generateHexNonce(byteLength) {
-        const bytes = window.crypto.getRandomValues(new Uint8Array(byteLength));
-        return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+    #generateNonce() {
+        const arr = window.crypto.getRandomValues(new Uint8Array(8));
+        return Array.from(arr, b => b.toString(16).padStart(2, "0")).join("");
     }
 
-    /**
-     * Computes a SHA-256 cryptographic signature for the current counter state.
-     * @param {number} count
-     * @param {number} startTimestamp
-     * @returns {Promise<string>}
-     */
-    async computeStateSignature(count, startTimestamp) {
-        const canonical = `${this.sessionNonce}::COUNT=${count}::START=${startTimestamp}`;
-        const digest = await window.crypto.subtle.digest("SHA-256", this.encoder.encode(canonical));
-        const hashArray = Array.from(new Uint8Array(digest));
-        return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+    async computeHash(count, timestamp) {
+        const raw = `${this.nonce}::COUNT=${count}::TS=${timestamp}`;
+        const digest = await window.crypto.subtle.digest("SHA-256", this.encoder.encode(raw));
+        const bytes = Array.from(new Uint8Array(digest));
+        return bytes.map(b => b.toString(16).padStart(2, "0")).join("");
     }
 }
 
 /* ============================================================================
- * LAYER 3: PROCEDURAL ACOUSTIC SYNTHESIZER (WEB AUDIO API)
+ * LAYER 3: ACOUSTIC SYNTHESIZER (WEB AUDIO API)
  * ============================================================================ */
 class AcousticSynthesizer {
     constructor() {
         this.ctx = null;
     }
 
-    #ensureContext() {
+    #initContext() {
         if (!this.ctx) {
             const AudioCtx = window.AudioContext || window.webkitAudioContext;
             if (AudioCtx) {
@@ -223,26 +183,21 @@ class AcousticSynthesizer {
         }
     }
 
-    /**
-     * Plays a crisp tactile click whose pitch scales smoothly from 0 to 100.
-     * @param {number} currentCount
-     */
-    playPulseTick(currentCount) {
-        this.#ensureContext();
+    playClickSound(currentCount) {
+        this.#initContext();
         if (!this.ctx) return;
 
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
 
-        // Pitch ascends harmonically as user approaches 100
-        const baseFreq = 260 + (Math.min(currentCount, 100) * 5.2);
+        const freq = 280 + (Math.min(currentCount, 100) * 4.8);
         osc.type = "sine";
-        osc.frequency.setValueAtTime(baseFreq, now);
-        osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.35, now + 0.065);
+        osc.frequency.setValueAtTime(freq, now);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.4, now + 0.05);
 
-        gain.gain.setValueAtTime(0.14, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.075);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
 
         osc.connect(gain);
         gain.connect(this.ctx.destination);
@@ -251,111 +206,84 @@ class AcousticSynthesizer {
         osc.stop(now + 0.08);
     }
 
-    /**
-     * Plays a triumphant multi-chord victory fanfare when reaching 100.
-     */
-    playCelebrationFanfare() {
-        this.#ensureContext();
+    playFanfare() {
+        this.#initContext();
         if (!this.ctx) return;
 
         const now = this.ctx.currentTime;
-        // C Major 9th arpeggio notes (C5, E5, G5, B5, D6, C6)
-        const notes = [523.25, 659.25, 783.99, 987.77, 1174.66, 1046.50];
+        const chord = [523.25, 659.25, 783.99, 987.77, 1046.50];
 
-        notes.forEach((freq, index) => {
-            const startTime = now + index * 0.09;
-            const duration = index === notes.length - 1 ? 0.95 : 0.35;
-
+        chord.forEach((f, idx) => {
+            const t = now + idx * 0.085;
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
 
             osc.type = "triangle";
-            osc.frequency.setValueAtTime(freq, startTime);
+            osc.frequency.setValueAtTime(f, t);
 
-            gain.gain.setValueAtTime(0.001, startTime);
-            gain.gain.linearRampToValueAtTime(0.18, startTime + 0.03);
-            gain.gain.exponentialRampToValueAtTime(0.0008, startTime + duration);
+            gain.gain.setValueAtTime(0.001, t);
+            gain.gain.linearRampToValueAtTime(0.16, t + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0008, t + 0.6);
 
             osc.connect(gain);
             gain.connect(this.ctx.destination);
 
-            osc.start(startTime);
-            osc.stop(startTime + duration + 0.02);
+            osc.start(t);
+            osc.stop(t + 0.65);
         });
     }
 }
 
 /* ============================================================================
- * LAYER 4: PARTICLE PHYSICS & FIREWORKS CELEBRATION ENGINE
+ * LAYER 4: PARTICLE PHYSICS & FIREWORKS ENGINE
  * ============================================================================ */
 class ParticlePhysicsEngine {
-    constructor(canvasElement) {
-        this.canvas = canvasElement;
+    constructor(canvas) {
+        this.canvas = canvas;
         this.ctx = this.canvas.getContext("2d");
         this.particles = [];
-        this.animationFrameId = null;
-        this.palette = [
-            "#f59e0b", "#38bdf8", "#10b981", "#f43f5e",
-            "#a855f7", "#fde047", "#ffffff"
-        ];
-        this.#bindResize();
+        this.animId = null;
+        this.colors = ["#f59e0b", "#38bdf8", "#10b981", "#8b5cf6", "#ef4444", "#ffffff"];
+        this.#resize();
     }
 
-    #bindResize() {
-        const resize = () => {
+    #resize() {
+        const updateSize = () => {
             this.canvas.width = window.innerWidth;
             this.canvas.height = window.innerHeight;
         };
-        resize();
-        window.addEventListener("resize", resize);
+        updateSize();
+        window.addEventListener("resize", updateSize);
     }
 
-    /**
-     * Spawns a radial burst of high-velocity celebratory particles.
-     * @param {number} originX
-     * @param {number} originY
-     * @param {number} count
-     */
-    emitBurst(originX, originY, count = 90) {
+    spawnBurst(x, y, count = 100) {
         for (let i = 0; i < count; i++) {
-            const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.25;
-            const speed = 3 + Math.random() * 9.5;
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 2 + Math.random() * 8;
             this.particles.push({
-                x: originX,
-                y: originY,
+                x, y,
                 vx: Math.cos(angle) * speed,
-                vy: Math.sin(angle) * speed - 2.2,
-                gravity: 0.16 + Math.random() * 0.06,
-                drag: 0.965,
-                size: 3 + Math.random() * 4.5,
-                rotation: Math.random() * Math.PI * 2,
-                rotationSpeed: (Math.random() - 0.5) * 0.2,
-                color: this.palette[Math.floor(Math.random() * this.palette.length)],
+                vy: Math.sin(angle) * speed - 1.5,
+                gravity: 0.15,
+                drag: 0.96,
+                size: 3 + Math.random() * 4,
                 alpha: 1,
-                decay: 0.008 + Math.random() * 0.01,
-                shape: Math.random() > 0.45 ? "rect" : "circle"
+                decay: 0.007 + Math.random() * 0.01,
+                color: this.colors[Math.floor(Math.random() * this.colors.length)]
             });
         }
-
-        if (!this.animationFrameId) {
-            this.#renderLoop();
-        }
+        if (!this.animId) this.#loop();
     }
 
-    /**
-     * Launches a multi-stage fireworks sequence across the viewport.
-     */
-    launchGrandCelebration() {
+    launchCelebration() {
         const w = this.canvas.width;
         const h = this.canvas.height;
-
-        this.emitBurst(w * 0.5, h * 0.42, 130);
-        setTimeout(() => this.emitBurst(w * 0.25, h * 0.35, 95), 250);
-        setTimeout(() => this.emitBurst(w * 0.75, h * 0.35, 95), 480);
-        setTimeout(() => this.emitBurst(w * 0.5, h * 0.28, 140), 780);
+        this.spawnBurst(w * 0.5, h * 0.4, 140);
+        setTimeout(() => this.spawnBurst(w * 0.3, h * 0.35, 90), 200);
+        setTimeout(() => this.spawnBurst(w * 0.7, h * 0.35, 90), 400);
     }
 
-    #renderLoop() {
+    #loop() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         for (let i = this.particles.length - 1; i >= 0; i--) {
@@ -364,7 +292,6 @@ class ParticlePhysicsEngine {
             p.vy = p.vy * p.drag + p.gravity;
             p.x += p.vx;
             p.y += p.vy;
-            p.rotation += p.rotationSpeed;
             p.alpha -= p.decay;
 
             if (p.alpha <= 0) {
@@ -374,204 +301,154 @@ class ParticlePhysicsEngine {
 
             this.ctx.save();
             this.ctx.globalAlpha = Math.max(0, p.alpha);
-            this.ctx.translate(p.x, p.y);
-            this.ctx.rotate(p.rotation);
             this.ctx.fillStyle = p.color;
-
-            if (p.shape === "rect") {
-                this.ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
-            } else {
-                this.ctx.beginPath();
-                this.ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
-                this.ctx.fill();
-            }
-
+            this.ctx.beginPath();
+            this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            this.ctx.fill();
             this.ctx.restore();
         }
 
         if (this.particles.length > 0) {
-            this.animationFrameId = window.requestAnimationFrame(() => this.#renderLoop());
+            this.animId = window.requestAnimationFrame(() => this.#loop());
         } else {
-            this.animationFrameId = null;
+            this.animId = null;
         }
     }
 }
 
 /* ============================================================================
- * LAYER 5: QUANTUM COUNTER KERNEL (ORCHESTRATOR & DOM CONTROLLER)
+ * LAYER 5: QUANTUM COUNTER KERNEL & STATE ORCHESTRATOR
  * ============================================================================ */
 class QuantumCounterKernel {
     constructor() {
-        this.targetMilestone = 100;
-        this.ringCircumference = 2 * Math.PI * 115; // 722.56631
-
+        this.target = 100;
+        this.ringCircumference = 816.814;
         this.vault = new CryptoVaultEngine();
         this.guard = new IntegrityGuard();
         this.audio = new AcousticSynthesizer();
-        this.physics = new ParticlePhysicsEngine(document.getElementById("celebrationCanvas"));
+        this.physics = new ParticlePhysicsEngine(document.getElementById("particleCanvas"));
 
         this.dom = {
-            counterDisplay: document.getElementById("counterDisplay"),
-            progressRing: document.getElementById("progressRing"),
-            incrementBtn: document.getElementById("incrementBtn"),
-            resetBtn: document.getElementById("resetBtn"),
-            percentDisplay: document.getElementById("percentDisplay"),
-            vaultStateDisplay: document.getElementById("vaultStateDisplay"),
-            integrityHash: document.getElementById("integrityHash"),
-            celebrationModal: document.getElementById("celebrationModal"),
-            completionTimeDisplay: document.getElementById("completionTimeDisplay"),
-            closeCelebrationBtn: document.getElementById("closeCelebrationBtn"),
-            restartFromModalBtn: document.getElementById("restartFromModalBtn")
+            counterNum: document.getElementById("counterNumber"),
+            ringProgress: document.getElementById("liquidRingProgress"),
+            triggerBtn: document.getElementById("quantumTriggerBtn"),
+            resetBtn: document.getElementById("resetVaultBtn"),
+            vaultStatus: document.getElementById("vaultStatusText"),
+            hashDisplay: document.getElementById("hashDisplay"),
+            modal: document.getElementById("celebrationModal"),
+            resumeBtn: document.getElementById("modalResumeBtn"),
+            modalResetBtn: document.getElementById("modalResetBtn")
         };
 
         this.state = {
             count: 0,
-            startTimestamp: null,
+            timestamp: null,
             celebrated: false,
-            signature: ""
+            hash: ""
         };
     }
 
-    async initialize() {
+    async init() {
         const restored = await this.vault.unsealPayload();
-        if (restored && typeof restored.count === "number" && restored.count >= 0) {
+        if (restored && typeof restored.count === "number") {
             this.state.count = restored.count;
-            this.state.startTimestamp = restored.startTimestamp || null;
+            this.state.timestamp = restored.timestamp || null;
             this.state.celebrated = Boolean(restored.celebrated);
         }
 
-        await this.#refreshIntegritySignature();
-        this.#bindEvents();
-        this.#renderUI(false);
+        await this.#updateHash();
+        this.#bind();
+        this.#render(false);
     }
 
-    #bindEvents() {
-        this.dom.incrementBtn.addEventListener("click", () => this.handleIncrement());
-        this.dom.resetBtn.addEventListener("click", () => this.handleReset());
-
-        this.dom.closeCelebrationBtn.addEventListener("click", () => {
-            this.dom.celebrationModal.setAttribute("hidden", "");
-        });
-
-        this.dom.restartFromModalBtn.addEventListener("click", async () => {
-            this.dom.celebrationModal.setAttribute("hidden", "");
-            await this.handleReset();
-        });
-
-        // Keyboard accessibility (Space / Enter when not focused on another button)
-        window.addEventListener("keydown", (event) => {
-            if (event.code === "Space" && document.activeElement !== this.dom.incrementBtn) {
-                if (this.dom.celebrationModal.hasAttribute("hidden")) {
-                    event.preventDefault();
-                    this.handleIncrement();
-                }
-            }
+    #bind() {
+        this.dom.triggerBtn.addEventListener("click", () => this.increment());
+        this.dom.resetBtn.addEventListener("click", () => this.reset());
+        this.dom.resumeBtn.addEventListener("click", () => this.dom.modal.setAttribute("hidden", ""));
+        this.dom.modalResetBtn.addEventListener("click", async () => {
+            this.dom.modal.setAttribute("hidden", "");
+            await this.reset();
         });
     }
 
-    async handleIncrement() {
-        if (this.state.count === 0 && !this.state.startTimestamp) {
-            this.state.startTimestamp = performance.now();
+    async increment() {
+        if (this.state.count === 0 && !this.state.timestamp) {
+            this.state.timestamp = performance.now();
         }
 
         this.state.count += 1;
-        this.audio.playPulseTick(this.state.count);
+        this.audio.playClickSound(this.state.count);
 
-        // Emit subtle micro-spark on button click
-        const btnRect = this.dom.incrementBtn.getBoundingClientRect();
-        this.physics.emitBurst(
-            btnRect.left + btnRect.width / 2,
-            btnRect.top + btnRect.height / 2,
-            12
-        );
+        const rect = this.dom.triggerBtn.getBoundingClientRect();
+        this.physics.spawnBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 12);
 
-        await this.#refreshIntegritySignature();
-        this.#renderUI(true);
-        await this.#persistEncryptedState();
+        await this.#updateHash();
+        this.#render(true);
+        await this.#save();
 
-        // Trigger full celebration strictly upon reaching 100
-        if (this.state.count === this.targetMilestone && !this.state.celebrated) {
+        if (this.state.count === this.target && !this.state.celebrated) {
             this.state.celebrated = true;
-            await this.#persistEncryptedState();
-            this.#triggerMilestone100Celebration();
+            await this.#save();
+            this.#celebrate();
         }
     }
 
-    async handleReset() {
+    async reset() {
         this.state.count = 0;
-        this.state.startTimestamp = null;
+        this.state.timestamp = null;
         this.state.celebrated = false;
-
         this.vault.purgeVault();
-        await this.#refreshIntegritySignature();
-        this.#renderUI(false);
+        await this.#updateHash();
+        this.#render(false);
     }
 
-    async #refreshIntegritySignature() {
-        this.state.signature = await this.guard.computeStateSignature(
-            this.state.count,
-            this.state.startTimestamp || 0
-        );
+    async #updateHash() {
+        this.state.hash = await this.guard.computeHash(this.state.count, this.state.timestamp || 0);
     }
 
-    async #persistEncryptedState() {
-        this.dom.vaultStateDisplay.textContent = "جاري التشفير...";
+    async #save() {
+        this.dom.vaultStatus.textContent = "جاري التشفير...";
         const ok = await this.vault.sealPayload({
             count: this.state.count,
-            startTimestamp: this.state.startTimestamp,
+            timestamp: this.state.timestamp,
             celebrated: this.state.celebrated,
-            signature: this.state.signature
+            hash: this.state.hash
         });
-        this.dom.vaultStateDisplay.textContent = ok ? "مؤمّن (AES-256)" : "خطأ تشفير";
+        this.dom.vaultStatus.textContent = ok ? "مؤمّن (AES-256)" : "خطأ تشفير";
     }
 
-    #renderUI(animateBump) {
+    #render(animate) {
         const count = this.state.count;
-        this.dom.counterDisplay.textContent = String(count);
+        this.dom.counterNum.textContent = String(count);
 
-        if (animateBump) {
-            this.dom.counterDisplay.classList.remove("bump");
-            void this.dom.counterDisplay.offsetWidth; // Force reflow for crisp animation
-            this.dom.counterDisplay.classList.add("bump");
+        if (animate) {
+            this.dom.counterNum.classList.remove("bump");
+            void this.dom.counterNum.offsetWidth;
+            this.dom.counterNum.classList.add("bump");
         }
 
-        // Update SVG circular progress bar (clamped at 100%)
-        const clampedRatio = Math.min(count / this.targetMilestone, 1);
-        const offset = this.ringCircumference * (1 - clampedRatio);
-        this.dom.progressRing.style.strokeDashoffset = String(offset);
+        const ratio = Math.min(count / this.target, 1);
+        const offset = this.ringCircumference * (1 - ratio);
+        this.dom.ringProgress.style.strokeDashoffset = String(offset);
+        this.dom.hashDisplay.textContent = `0x${this.state.hash.slice(0, 6).toUpperCase()}`;
 
-        // Update percentage & integrity hash readout
-        const percent = Math.floor(clampedRatio * 100);
-        this.dom.percentDisplay.textContent = `${percent}%`;
-        this.dom.integrityHash.textContent = `SHA256: 0x${this.state.signature.slice(0, 8).toUpperCase()}`;
-
-        if (count >= this.targetMilestone) {
-            this.dom.progressRing.classList.add("milestone-reached");
-            this.dom.counterDisplay.classList.add("complete");
+        if (count >= this.target) {
+            this.dom.ringProgress.classList.add("complete");
+            this.dom.counterNum.classList.add("complete");
         } else {
-            this.dom.progressRing.classList.remove("milestone-reached");
-            this.dom.counterDisplay.classList.remove("complete");
+            this.dom.ringProgress.classList.remove("complete");
+            this.dom.counterNum.classList.remove("complete");
         }
     }
 
-    #triggerMilestone100Celebration() {
-        const elapsedMs = this.state.startTimestamp
-            ? Math.max(0, performance.now() - this.state.startTimestamp)
-            : 0;
-        const seconds = (elapsedMs / 1000).toFixed(1);
-
-        this.dom.completionTimeDisplay.textContent = `${seconds}s`;
-        this.dom.celebrationModal.removeAttribute("hidden");
-
-        this.audio.playCelebrationFanfare();
-        this.physics.launchGrandCelebration();
+    #celebrate() {
+        this.dom.modal.removeAttribute("hidden");
+        this.audio.playFanfare();
+        this.physics.launchCelebration();
     }
 }
 
-/* ============================================================================
- * BOOTSTRAP APPLICATION ON DOM READY
- * ============================================================================ */
 window.addEventListener("DOMContentLoaded", async () => {
     const kernel = new QuantumCounterKernel();
-    await kernel.initialize();
+    await kernel.init();
 });
