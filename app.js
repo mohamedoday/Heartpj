@@ -1,8 +1,8 @@
 /**
  * ============================================================================
- * LIQUID-OS QUANTUM COUNTER KERNEL // ELITE SECURE ARCHITECTURE
+ * LIQUID-OS QUANTUM COUNTER ENTERPRISE KERNEL v4.8
  * ============================================================================
- * Layers Included:
+ * Architecture Modules:
  * 1. CryptoVaultEngine      : AES-256-GCM State Encryption & PBKDF2 Key Derivation
  * 2. IntegrityGuard         : SHA-256 State Checksum & Tamper Prevention
  * 3. AcousticSynthesizer    : Web Audio API Procedural Dynamic Sound Engine
@@ -14,24 +14,24 @@
 "use strict";
 
 /* ============================================================================
- * LAYER 1: CRYPTOGRAPHIC STORAGE VAULT (AES-256-GCM + PBKDF2-SHA256)
+ * MODULE 1: CRYPTOGRAPHIC STORAGE VAULT (AES-256-GCM + PBKDF2-SHA256)
  * ============================================================================ */
 class CryptoVaultEngine {
-    constructor(storageKey = "liquidos_vault_secure_v1") {
+    constructor(storageKey = "liquidos_enterprise_vault_v4") {
         this.storageKey = storageKey;
         this.encoder = new TextEncoder();
         this.decoder = new TextDecoder();
-        this.pbkdf2Iterations = 150000;
+        this.pbkdf2Iterations = 200000;
         this.masterSeed = this.#resolveDeviceFingerprintSeed();
     }
 
     #resolveDeviceFingerprintSeed() {
         return [
-            navigator.userAgent,
-            navigator.language,
+            navigator.userAgent || "browser",
+            navigator.language || "ar",
             screen.width || 1920,
             screen.height || 1080,
-            "LIQUID-OS-SECURE-ROOT-KEY-2026"
+            "LIQUID-OS-ENTERPRISE-SECURITY-ROOT-KEY-2026"
         ].join("|");
     }
 
@@ -91,7 +91,7 @@ class CryptoVaultEngine {
             );
 
             const envelope = {
-                v: 2,
+                v: 4,
                 alg: "AES-256-GCM",
                 salt: this.#bytesToBase64(salt),
                 iv: this.#bytesToBase64(iv),
@@ -102,7 +102,7 @@ class CryptoVaultEngine {
             window.localStorage.setItem(this.storageKey, JSON.stringify(envelope));
             return true;
         } catch (err) {
-            console.error("[CryptoVaultEngine] Encryption error:", err);
+            console.error("[CryptoVaultEngine] Critical encryption failure:", err);
             return false;
         }
     }
@@ -114,7 +114,7 @@ class CryptoVaultEngine {
 
             const envelope = JSON.parse(raw);
             if (!envelope || envelope.alg !== "AES-256-GCM") {
-                throw new Error("Invalid cryptographic envelope format");
+                throw new Error("Invalid cryptographic envelope format detected");
             }
 
             const salt = this.#base64ToBytes(envelope.salt);
@@ -130,7 +130,7 @@ class CryptoVaultEngine {
 
             return JSON.parse(this.decoder.decode(decryptedBuffer));
         } catch (err) {
-            console.warn("[CryptoVaultEngine] Vault integrity check failed. Purging corrupted state.", err);
+            console.warn("[CryptoVaultEngine] Vault integrity validation failed. Purging state.", err);
             this.purgeVault();
             return null;
         }
@@ -142,7 +142,7 @@ class CryptoVaultEngine {
 }
 
 /* ============================================================================
- * LAYER 2: INTEGRITY GUARD & HASH VERIFICATION
+ * MODULE 2: INTEGRITY GUARD & HASH VERIFICATION
  * ============================================================================ */
 class IntegrityGuard {
     constructor() {
@@ -151,12 +151,12 @@ class IntegrityGuard {
     }
 
     #generateNonce() {
-        const arr = window.crypto.getRandomValues(new Uint8Array(8));
+        const arr = window.crypto.getRandomValues(new Uint8Array(12));
         return Array.from(arr, b => b.toString(16).padStart(2, "0")).join("");
     }
 
     async computeHash(count, timestamp) {
-        const raw = `${this.nonce}::COUNT=${count}::TS=${timestamp}`;
+        const raw = `${this.nonce}::COUNT=${count}::TS=${timestamp}::LIQUIDOS`;
         const digest = await window.crypto.subtle.digest("SHA-256", this.encoder.encode(raw));
         const bytes = Array.from(new Uint8Array(digest));
         return bytes.map(b => b.toString(16).padStart(2, "0")).join("");
@@ -164,7 +164,7 @@ class IntegrityGuard {
 }
 
 /* ============================================================================
- * LAYER 3: ACOUSTIC SYNTHESIZER (WEB AUDIO API)
+ * MODULE 3: ACOUSTIC SYNTHESIZER (WEB AUDIO API)
  * ============================================================================ */
 class AcousticSynthesizer {
     constructor() {
@@ -191,19 +191,19 @@ class AcousticSynthesizer {
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
 
-        const freq = 280 + (Math.min(currentCount, 100) * 4.8);
+        const freq = 300 + (Math.min(currentCount, 100) * 5.2);
         osc.type = "sine";
         osc.frequency.setValueAtTime(freq, now);
-        osc.frequency.exponentialRampToValueAtTime(freq * 1.4, now + 0.05);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.45, now + 0.06);
 
-        gain.gain.setValueAtTime(0.12, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+        gain.gain.setValueAtTime(0.14, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
 
         osc.connect(gain);
         gain.connect(this.ctx.destination);
 
         osc.start(now);
-        osc.stop(now + 0.08);
+        osc.stop(now + 0.09);
     }
 
     playFanfare() {
@@ -211,10 +211,10 @@ class AcousticSynthesizer {
         if (!this.ctx) return;
 
         const now = this.ctx.currentTime;
-        const chord = [523.25, 659.25, 783.99, 987.77, 1046.50];
+        const chord = [523.25, 659.25, 783.99, 987.77, 1174.66, 1318.51];
 
         chord.forEach((f, idx) => {
-            const t = now + idx * 0.085;
+            const t = now + idx * 0.09;
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
 
@@ -222,20 +222,20 @@ class AcousticSynthesizer {
             osc.frequency.setValueAtTime(f, t);
 
             gain.gain.setValueAtTime(0.001, t);
-            gain.gain.linearRampToValueAtTime(0.16, t + 0.02);
-            gain.gain.exponentialRampToValueAtTime(0.0008, t + 0.6);
+            gain.gain.linearRampToValueAtTime(0.18, t + 0.025);
+            gain.gain.exponentialRampToValueAtTime(0.0008, t + 0.7);
 
             osc.connect(gain);
             gain.connect(this.ctx.destination);
 
             osc.start(t);
-            osc.stop(t + 0.65);
+            osc.stop(t + 0.75);
         });
     }
 }
 
 /* ============================================================================
- * LAYER 4: PARTICLE PHYSICS & FIREWORKS ENGINE
+ * MODULE 4: PARTICLE PHYSICS & FIREWORKS ENGINE
  * ============================================================================ */
 class ParticlePhysicsEngine {
     constructor(canvas) {
@@ -243,7 +243,7 @@ class ParticlePhysicsEngine {
         this.ctx = this.canvas.getContext("2d");
         this.particles = [];
         this.animId = null;
-        this.colors = ["#f59e0b", "#38bdf8", "#10b981", "#8b5cf6", "#ef4444", "#ffffff"];
+        this.colors = ["#f59e0b", "#38bdf8", "#10b981", "#8b5cf6", "#ef4444", "#ffffff", "#fbbf24"];
         this.#resize();
     }
 
@@ -256,19 +256,19 @@ class ParticlePhysicsEngine {
         window.addEventListener("resize", updateSize);
     }
 
-    spawnBurst(x, y, count = 100) {
+    spawnBurst(x, y, count = 120) {
         for (let i = 0; i < count; i++) {
             const angle = Math.random() * Math.PI * 2;
-            const speed = 2 + Math.random() * 8;
+            const speed = 2.5 + Math.random() * 9;
             this.particles.push({
                 x, y,
                 vx: Math.cos(angle) * speed,
-                vy: Math.sin(angle) * speed - 1.5,
-                gravity: 0.15,
-                drag: 0.96,
-                size: 3 + Math.random() * 4,
+                vy: Math.sin(angle) * speed - 1.8,
+                gravity: 0.16,
+                drag: 0.965,
+                size: 3 + Math.random() * 4.5,
                 alpha: 1,
-                decay: 0.007 + Math.random() * 0.01,
+                decay: 0.006 + Math.random() * 0.009,
                 color: this.colors[Math.floor(Math.random() * this.colors.length)]
             });
         }
@@ -278,9 +278,10 @@ class ParticlePhysicsEngine {
     launchCelebration() {
         const w = this.canvas.width;
         const h = this.canvas.height;
-        this.spawnBurst(w * 0.5, h * 0.4, 140);
-        setTimeout(() => this.spawnBurst(w * 0.3, h * 0.35, 90), 200);
-        setTimeout(() => this.spawnBurst(w * 0.7, h * 0.35, 90), 400);
+        this.spawnBurst(w * 0.5, h * 0.4, 160);
+        setTimeout(() => this.spawnBurst(w * 0.28, h * 0.32, 100), 220);
+        setTimeout(() => this.spawnBurst(w * 0.72, h * 0.32, 100), 440);
+        setTimeout(() => this.spawnBurst(w * 0.5, h * 0.25, 180), 750);
     }
 
     #loop() {
@@ -317,7 +318,7 @@ class ParticlePhysicsEngine {
 }
 
 /* ============================================================================
- * LAYER 5: QUANTUM COUNTER KERNEL & STATE ORCHESTRATOR
+ * MODULE 5: QUANTUM COUNTER KERNEL & STATE ORCHESTRATOR
  * ============================================================================ */
 class QuantumCounterKernel {
     constructor() {
@@ -380,7 +381,7 @@ class QuantumCounterKernel {
         this.audio.playClickSound(this.state.count);
 
         const rect = this.dom.triggerBtn.getBoundingClientRect();
-        this.physics.spawnBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 12);
+        this.physics.spawnBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 14);
 
         await this.#updateHash();
         this.#render(true);
@@ -414,7 +415,7 @@ class QuantumCounterKernel {
             celebrated: this.state.celebrated,
             hash: this.state.hash
         });
-        this.dom.vaultStatus.textContent = ok ? "مؤمّن (AES-256)" : "خطأ تشفير";
+        this.dom.vaultStatus.textContent = ok ? "AES-256-GCM [نشط]" : "خطأ تشفير";
     }
 
     #render(animate) {
@@ -430,7 +431,7 @@ class QuantumCounterKernel {
         const ratio = Math.min(count / this.target, 1);
         const offset = this.ringCircumference * (1 - ratio);
         this.dom.ringProgress.style.strokeDashoffset = String(offset);
-        this.dom.hashDisplay.textContent = `0x${this.state.hash.slice(0, 6).toUpperCase()}`;
+        this.dom.hashDisplay.textContent = `0x${this.state.hash.slice(0, 8).toUpperCase()}`;
 
         if (count >= this.target) {
             this.dom.ringProgress.classList.add("complete");
