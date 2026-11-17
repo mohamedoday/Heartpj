@@ -1,0 +1,332 @@
+:root {
+    --bg-deep: #030712;
+    --panel-bg: rgba(10, 15, 30, 0.85);
+    --border-color: rgba(0, 243, 255, 0.25);
+    --neon-cyan: #00f3ff;
+    --neon-pink: #ff007f;
+    --neon-green: #00ff66;
+    --neon-gold: #ffb700;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --font-code: 'Fira Code', monospace;
+    --font-main: 'Cairo', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: var(--font-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* خلفية الماتركس الخفية والشبكة السيبرانية */
+.matrix-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.15;
+}
+
+.cyber-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* الهيدر */
+.cyber-header {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: rgba(3, 7, 18, 0.9);
+    border-bottom: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-area h1 {
+    font-family: var(--font-code);
+    font-size: 1.25rem;
+    letter-spacing: 2px;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+}
+
+.pulse-dot {
+    width: 12px;
+    height: 12px;
+    background-color: var(--neon-pink);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--neon-pink);
+    animation: headerPulse 1.5s infinite;
+}
+
+@keyframes headerPulse {
+    0% { transform: scale(0.95); opacity: 0.7; }
+    50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 20px var(--neon-pink); }
+    100% { transform: scale(0.95); opacity: 0.7; }
+}
+
+.status-badge {
+    font-family: var(--font-code);
+    font-size: 0.85rem;
+    background: rgba(0, 255, 102, 0.1);
+    border: 1px solid rgba(0, 255, 102, 0.3);
+    padding: 6px 14px;
+    border-radius: 4px;
+    color: var(--text-primary);
+}
+
+.active-status {
+    color: var(--neon-green);
+    font-weight: bold;
+}
+
+/* الحاوية الرئيسية */
+.main-container {
+    position: relative;
+    z-index: 10;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1800px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+@media (max-width: 1024px) {
+    .main-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* منطقة الكانفاس والقلب */
+.canvas-wrapper {
+    position: relative;
+    background: radial-gradient(circle at center, rgba(15, 23, 42, 0.6) 0%, rgba(3, 7, 18, 0.95) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: inset 0 0 50px rgba(0, 243, 255, 0.05), 0 10px 30px rgba(0, 0, 0, 0.5);
+    min-height: 550px;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.scanner-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+    opacity: 0.5;
+    animation: scanLine 6s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes scanLine {
+    0% { top: 0%; }
+    100% { top: 100%; }
+}
+
+/* لوحة التحكم */
+.control-panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    backdrop-filter: blur(16px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 12px;
+}
+
+.panel-header h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--neon-cyan);
+}
+
+.version-tag {
+    font-family: var(--font-code);
+    font-size: 0.75rem;
+    background: rgba(0, 243, 255, 0.1);
+    color: var(--neon-cyan);
+    padding: 2px 8px;
+    border-radius: 3px;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-group label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+}
+
+.control-group label span {
+    color: var(--neon-cyan);
+    font-family: var(--font-code);
+}
+
+select, input[type="range"] {
+    width: 100%;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-primary);
+    padding: 10px;
+    border-radius: 6px;
+    font-family: var(--font-main);
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+select:focus, input[type="range"]:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+}
+
+input[type="range"] {
+    accent-color: var(--neon-cyan);
+    cursor: pointer;
+    padding: 0;
+    height: 6px;
+}
+
+.btn-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.cyber-btn {
+    background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), rgba(0, 243, 255, 0.05));
+    border: 1px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: var(--font-main);
+    text-align: center;
+}
+
+.cyber-btn:hover {
+    background: var(--neon-cyan);
+    color: var(--bg-deep);
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+.cyber-btn.active {
+    background: rgba(0, 243, 255, 0.25);
+    box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.3);
+}
+
+.cyber-btn.warning {
+    border-color: var(--neon-pink);
+    color: var(--neon-pink);
+    background: linear-gradient(135deg, rgba(255, 0, 127, 0.1), rgba(255, 0, 127, 0.05));
+}
+
+.cyber-btn.warning:hover {
+    background: var(--neon-pink);
+    color: var(--bg-deep);
+    box-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
+}
+
+/* لوحة القياسات Telemetry */
+.telemetry-box {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 14px;
+    font-family: var(--font-code);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.telemetry-box h3 {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+}
+
+.telemetry-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+}
+
+.telemetry-row span:last-child {
+    color: var(--neon-green);
+}
+
+/* الفوتر */
+.cyber-footer {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 15px;
+    background: rgba(3, 7, 18, 0.9);
+    border-top: 1px solid var(--border-color);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
