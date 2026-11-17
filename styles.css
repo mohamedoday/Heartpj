@@ -1,13 +1,14 @@
 /* ============================================================================
- * LIQUID-OS & macOS ULTRA-DESIGN SYSTEM TOKENS
+ * LIQUID-OS & macOS ENTERPRISE ULTRA-DESIGN SYSTEM TOKENS v4.8
  * ============================================================================ */
 :root {
-    --mac-bg-glass: rgba(22, 27, 38, 0.65);
-    --mac-border-glass: rgba(255, 255, 255, 0.12);
-    --mac-border-highlight: rgba(56, 189, 248, 0.4);
-    --mac-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    --mac-bg-glass: rgba(15, 23, 42, 0.72);
+    --mac-border-glass: rgba(255, 255, 255, 0.14);
+    --mac-border-highlight: rgba(56, 189, 248, 0.6);
+    --mac-shadow: 0 40px 80px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     --liquid-cyan: #38bdf8;
     --liquid-blue: #0284c7;
+    --liquid-indigo: #6366f1;
     --liquid-purple: #8b5cf6;
     --liquid-gold: #f59e0b;
     --liquid-emerald: #10b981;
@@ -20,7 +21,7 @@
 }
 
 /* ============================================================================
- * GLOBAL RESET & FLUID BASE STYLES
+ * SECTION 1: GLOBAL RESET & FLUID BASE ARCHITECTURE
  * ============================================================================ */
 *, *::before, *::after {
     box-sizing: border-box;
@@ -31,12 +32,13 @@
 html, body {
     width: 100%;
     height: 100%;
-    background-color: #030712;
+    background-color: #02040a;
     color: var(--text-main);
     font-family: var(--font-sans);
     overflow: hidden;
     user-select: none;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -44,9 +46,11 @@ body {
     align-items: center;
     justify-content: center;
     background-image: 
-        radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.15) 0%, transparent 45%),
-        radial-gradient(circle at 85% 80%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
-        linear-gradient(135deg, #090d16 0%, #030712 100%);
+        radial-gradient(circle at 10% 15%, rgba(56, 189, 248, 0.18) 0%, transparent 40%),
+        radial-gradient(circle at 90% 85%, rgba(139, 92, 246, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 60%),
+        linear-gradient(135deg, #050b14 0%, #02040a 100%);
+    position: relative;
 }
 
 #particleCanvas {
@@ -59,36 +63,36 @@ body {
 }
 
 /* ============================================================================
- * macOS WINDOW SHELL & LIQUID GLASSMORPHISM
+ * SECTION 2: macOS WINDOW SHELL & FLUID GLASSMORPHISM LAYERS
  * ============================================================================ */
 .liquid-shell {
     position: relative;
     z-index: 10;
     width: 100%;
-    max-width: 480px;
+    max-width: 500px;
     background: var(--mac-bg-glass);
-    backdrop-filter: blur(28px) saturate(180%);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(36px) saturate(200%);
+    -webkit-backdrop-filter: blur(36px) saturate(200%);
     border: 1px solid var(--mac-border-glass);
-    border-radius: 20px;
+    border-radius: 24px;
     box-shadow: var(--mac-shadow);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    animation: windowEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: windowEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes windowEntrance {
-    0% { opacity: 0; transform: scale(0.92) translateY(20px); }
-    100% { opacity: 1; transform: scale(1) translateY(0); }
+    0% { opacity: 0; transform: scale(0.9) translateY(30px); filter: blur(10px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
 }
 
 .mac-window-bar {
     display: flex;
     align-items: center;
-    padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.03);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .mac-dots {
@@ -100,7 +104,14 @@ body {
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, filter 0.2s ease;
+    cursor: pointer;
+}
+
+.dot:hover {
+    filter: brightness(1.2);
+    transform: scale(1.08);
 }
 
 .dot.red { background-color: #ff5f56; border: 0.5px solid #e0443e; }
@@ -113,25 +124,25 @@ body {
     font-family: var(--font-mono);
     font-size: 0.75rem;
     color: var(--text-muted);
-    letter-spacing: 0.05em;
-    margin-right: 48px; /* Balance the dots */
+    letter-spacing: 0.08em;
+    margin-right: 52px;
 }
 
 /* ============================================================================
- * WORKSPACE CONTENT & CIRCULAR COUNTER
+ * SECTION 3: WORKSPACE CONTENT & SVG RADIAL PROGRESS RING
  * ============================================================================ */
 .workspace-content {
-    padding: 2.5rem 2rem;
+    padding: 2.75rem 2.25rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2.5rem;
+    gap: 2.75rem;
 }
 
 .counter-display-wrapper {
     position: relative;
-    width: 260px;
-    height: 260px;
+    width: 280px;
+    height: 280px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -141,18 +152,17 @@ body {
     position: absolute;
     inset: 0;
     transform: rotate(-90deg);
-    filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.25));
+    filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.3));
 }
 
 .ring-bg {
     fill: none;
-    stroke: rgba(255, 255, 255, 0.06);
+    stroke: rgba(255, 255, 255, 0.05);
     stroke-width: 10;
 }
 
 .ring-progress {
     fill: none;
-    stroke: url(#gradientDef);
     stroke: var(--liquid-cyan);
     stroke-width: 10;
     stroke-linecap: round;
@@ -163,7 +173,7 @@ body {
 
 .ring-progress.complete {
     stroke: var(--liquid-gold);
-    filter: drop-shadow(0 0 18px rgba(245, 158, 11, 0.6));
+    filter: drop-shadow(0 0 22px rgba(245, 158, 11, 0.7));
 }
 
 .counter-inner-box {
@@ -176,45 +186,46 @@ body {
 }
 
 .sub-label {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     color: var(--text-muted);
-    letter-spacing: 0.05em;
-    margin-bottom: 0.2rem;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.25rem;
+    font-family: var(--font-mono);
 }
 
 #counterNumber {
     font-family: var(--font-mono);
-    font-size: 4.5rem;
+    font-size: 4.8rem;
     font-weight: 800;
     line-height: 1;
     color: var(--text-main);
-    text-shadow: 0 0 25px rgba(56, 189, 248, 0.35);
+    text-shadow: 0 0 30px rgba(56, 189, 248, 0.4);
     transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s ease;
 }
 
 #counterNumber.bump {
-    transform: scale(1.18);
+    transform: scale(1.2);
     color: var(--liquid-cyan);
 }
 
 #counterNumber.complete {
     color: var(--liquid-gold);
-    text-shadow: 0 0 35px rgba(245, 158, 11, 0.7);
+    text-shadow: 0 0 40px rgba(245, 158, 11, 0.8);
 }
 
 .target-label {
-    margin-top: 0.5rem;
-    font-size: 0.75rem;
+    margin-top: 0.55rem;
+    font-size: 0.78rem;
     font-family: var(--font-mono);
     color: var(--text-muted);
-    background: rgba(255, 255, 255, 0.04);
-    padding: 0.2rem 0.7rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.25rem 0.8rem;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* ============================================================================
- * CONTROL STATION & LIQUID BUTTON
+ * SECTION 4: CONTROL STATION & ELITE LIQUID BUTTONS
  * ============================================================================ */
 .control-station {
     width: 100%;
@@ -225,38 +236,38 @@ body {
 .liquid-btn {
     position: relative;
     width: 100%;
-    max-width: 320px;
-    padding: 1.25rem 2rem;
-    background: linear-gradient(135deg, rgba(56, 189, 248, 0.18) 0%, rgba(2, 132, 199, 0.25) 100%);
+    max-width: 340px;
+    padding: 1.35rem 2.25rem;
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(2, 132, 199, 0.28) 100%);
     border: 1px solid var(--mac-border-highlight);
-    border-radius: 16px;
+    border-radius: 18px;
     color: var(--text-main);
     cursor: pointer;
     overflow: hidden;
     box-shadow: 
-        0 12px 30px rgba(2, 132, 199, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.25);
-    transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+        0 15px 35px rgba(2, 132, 199, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .liquid-btn:hover {
     border-color: var(--liquid-cyan);
     box-shadow: 
-        0 16px 40px rgba(56, 189, 248, 0.35),
-        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        0 20px 45px rgba(56, 189, 248, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .liquid-btn:active {
-    transform: scale(0.96) translateY(2px);
-    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);
+    transform: scale(0.95) translateY(2px);
+    box-shadow: 0 5px 15px rgba(56, 189, 248, 0.25);
 }
 
 .btn-liquid-effect {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.25) 0%, transparent 75%);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.35s ease;
     pointer-events: none;
 }
 
@@ -266,37 +277,37 @@ body {
 
 .btn-text {
     display: block;
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    letter-spacing: 0.02em;
-    margin-bottom: 0.2rem;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.25rem;
 }
 
 .btn-subtext {
     display: block;
-    font-size: 0.75rem;
+    font-size: 0.78rem;
     font-family: var(--font-mono);
     color: var(--liquid-cyan);
 }
 
 /* ============================================================================
- * LIQUID FOOTER & TELEMETRY
+ * SECTION 5: FOOTER & TELEMETRY INDICATORS
  * ============================================================================ */
 .liquid-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 1.75rem;
-    background: rgba(0, 0, 0, 0.25);
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 1.15rem 2rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.75rem;
 }
 
 .telemetry-box {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.25rem;
     color: var(--text-muted);
 }
 
@@ -309,36 +320,36 @@ body {
     border: none;
     color: #fca5a5;
     font-family: var(--font-sans);
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 600;
     cursor: pointer;
-    padding: 0.3rem 0.6rem;
-    border-radius: 6px;
+    padding: 0.35rem 0.7rem;
+    border-radius: 8px;
     transition: background 0.2s ease, color 0.2s ease;
 }
 
 .reset-link:hover {
-    background: rgba(239, 68, 68, 0.15);
+    background: rgba(239, 68, 68, 0.18);
     color: #ffffff;
 }
 
 /* ============================================================================
- * CELEBRATION MODAL (macOS GLASS CARD)
+ * SECTION 6: CELEBRATION MODAL & SYSTEM OVERLAYS
  * ============================================================================ */
 .celebration-modal {
     position: fixed;
     inset: 0;
     z-index: 200;
-    background: rgba(3, 7, 18, 0.82);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: rgba(2, 4, 10, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 1.5rem;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .celebration-modal:not([hidden]) {
@@ -348,15 +359,15 @@ body {
 
 .mac-glass-card {
     width: 100%;
-    max-width: 400px;
-    background: rgba(20, 27, 45, 0.85);
-    border: 1px solid rgba(245, 158, 11, 0.4);
-    border-radius: 24px;
-    padding: 2.5rem 2rem;
+    max-width: 420px;
+    background: rgba(20, 27, 45, 0.88);
+    border: 1px solid rgba(245, 158, 11, 0.45);
+    border-radius: 26px;
+    padding: 2.75rem 2.25rem;
     text-align: center;
-    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9), 0 0 40px rgba(245, 158, 11, 0.25);
-    transform: scale(0.85) translateY(20px);
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 35px 80px rgba(0, 0, 0, 0.95), 0 0 50px rgba(245, 158, 11, 0.3);
+    transform: scale(0.85) translateY(25px);
+    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .celebration-modal:not([hidden]) .mac-glass-card {
@@ -364,42 +375,42 @@ body {
 }
 
 .celebration-emoji {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-    filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.6));
+    font-size: 4.5rem;
+    margin-bottom: 1.15rem;
+    filter: drop-shadow(0 0 25px rgba(245, 158, 11, 0.7));
     animation: bounceEmoji 2s infinite ease-in-out;
 }
 
 @keyframes bounceEmoji {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-12px); }
 }
 
 .mac-glass-card h2 {
-    font-size: 1.5rem;
+    font-size: 1.65rem;
     font-weight: 800;
     color: var(--liquid-gold);
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.85rem;
 }
 
 .mac-glass-card p {
-    font-size: 0.95rem;
+    font-size: 0.98rem;
     color: var(--text-muted);
-    line-height: 1.6;
-    margin-bottom: 2rem;
+    line-height: 1.65;
+    margin-bottom: 2.25rem;
 }
 
 .modal-buttons {
     display: flex;
-    gap: 0.85rem;
+    gap: 0.95rem;
 }
 
 .mac-btn {
     flex: 1;
-    padding: 0.85rem 1rem;
-    border-radius: 12px;
+    padding: 0.9rem 1.1rem;
+    border-radius: 14px;
     font-family: var(--font-sans);
-    font-size: 0.92rem;
+    font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
     transition: filter 0.2s ease, transform 0.1s ease;
@@ -408,25 +419,20 @@ body {
 .mac-btn.primary {
     background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     border: none;
-    color: #030712;
-    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.35);
+    color: #02040a;
+    box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
 }
 
 .mac-btn.secondary {
     background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     color: var(--text-main);
 }
 
 .mac-btn:hover {
-    filter: brightness(1.1);
+    filter: brightness(1.12);
 }
 
 .mac-btn:active {
-    transform: scale(0.97);
-}
-
-@keyframes windowEntrance {
-    0% { opacity: 0; transform: scale(0.9) translateY(20px); }
-    100% { opacity: 1; transform: scale(1) translateY(0); }
+    transform: scale(0.96);
 }
